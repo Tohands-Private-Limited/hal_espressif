@@ -254,6 +254,28 @@ config ESP_TIMER_IMPL_SYSTIMER
 	default y
 	depends on !SOC_SERIES_ESP32
 
+menu "Wi-Fi config"
+
+# Without SMP, as before SMP support: the Wi-Fi task and its interrupt on core 0.
+# Under SMP, Zephyr's ESP32_WIFI_TASK_CORE_ID choice selects the core instead
+# (zephyr_compat.h maps it to these names).
+choice ESP_WIFI_TASK_CORE_ID
+	prompt "WiFi Task Core ID"
+	depends on SOC_SERIES_ESP32S3 && !SMP
+	default ESP_WIFI_TASK_PINNED_TO_CORE_0
+	help
+	  Pinned WiFi task to core 0 or core 1.
+
+config ESP_WIFI_TASK_PINNED_TO_CORE_0
+	bool "Core 0"
+
+config ESP_WIFI_TASK_PINNED_TO_CORE_1
+	bool "Core 1"
+
+endchoice # ESP_WIFI_TASK_CORE_ID
+
+endmenu # Wi-Fi config
+
 if BT_ESP32
 
 config ESP32_BT_CTLR_PINNED_TO_CORE
